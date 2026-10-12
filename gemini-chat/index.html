@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="Gemini free-tier chatbot — plain HTML, CSS and JavaScript, streaming responses, no build step.">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Gemini Chat · free tier</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>%E2%9C%A6</text></svg>">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip-link" href="#composer-input">Skip to message box</a>
+
+<!-- ============================ icon sprite ============================ -->
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.8v2.4M12 18.8v2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M2.8 12h2.4M18.8 12h2.4M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-7 16-2.5-6.5L4 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16v4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="10" r="1.8" fill="none" stroke="currentColor" stroke-width="2"/><path d="m4 18 5-5 4 4 3-3 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v10m0 0 4-4m-4 4-4-4M4 18h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4 10-10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4 2.8 20h18.4L12 4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v4M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4L12 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-continue" viewBox="0 0 24 24"><path d="M8 5l9 7-9 7V5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+</svg>
+
+<div class="app" id="app">
+  <!-- ============================== sidebar ============================== -->
+  <aside class="sidebar" id="sidebar" aria-label="Conversations">
+    <div class="sidebar-top">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-spark"/></svg></span>
+        <div class="brand-text">
+          <strong>Gemini Chat</strong>
+          <span id="brand-sub">free tier · HTML/CSS/JS</span>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" id="new-chat" title="New chat (Ctrl+K)">
+        <svg class="icon"><use href="#i-plus"/></svg> New chat
+      </button>
+      <div class="search-wrap">
+        <svg class="icon search-icon"><use href="#i-search"/></svg>
+        <input id="chat-search" class="input search-input" type="search" placeholder="Search chats" aria-label="Search conversations">
+      </div>
+    </div>
+
+    <nav class="chat-list" id="chat-list" aria-label="Chat history"></nav>
+
+    <div class="sidebar-bottom">
+      <div class="quota" id="quota-box" title="Client-side quota guard. Real limits: aistudio.google.com/rate-limit">
+        <div class="quota-row"><span>Requests / min</span><b id="quota-rpm">0 / 0</b></div>
+        <div class="quota-row"><span>Requests / day</span><b id="quota-rpd">0 / 0</b></div>
+        <div class="quota-bar" aria-hidden="true"><i id="quota-rpm-bar"></i></div>
+      </div>
+      <div class="sidebar-actions">
+        <button class="btn btn-ghost" id="export-chats" title="Download all chats as JSON"><svg class="icon"><use href="#i-download"/></svg> Export</button>
+        <button class="btn btn-ghost" id="theme-toggle" title="Toggle theme"><svg class="icon"><use href="#i-moon"/></svg></button>
+        <button class="btn btn-ghost" id="open-settings" title="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
+      </div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <!-- =============================== main =============================== -->
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn only-mobile" id="sidebar-toggle" aria-label="Open chat list"><svg class="icon"><use href="#i-menu"/></svg></button>
+      <div class="topbar-title">
+        <h1 id="chat-title" contenteditable="plaintext-only" spellcheck="false" title="Click to rename">New chat</h1>
+        <div class="topbar-meta">
+          <span class="badge" id="model-badge">gemini-3.6-flash</span>
+          <span class="badge badge-tier" id="tier-badge">free</span>
+          <span class="badge badge-soft" id="mode-badge">direct</span>
+          <span class="badge badge-soft" id="key-badge">no key</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <label class="select-wrap" title="Model">
+          <select id="model-select" class="select" aria-label="Model"></select>
+        </label>
+        <button class="icon-btn" id="clear-chat" title="Clear this conversation"><svg class="icon"><use href="#i-trash"/></svg></button>
+      </div>
+    </header>
+
+    <section class="messages-wrap" id="messages-wrap">
+      <div class="messages" id="messages" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Conversation"></div>
+      <button class="scroll-btn" id="scroll-bottom" hidden title="Scroll to latest"><svg class="icon"><use href="#i-download"/></svg></button>
+    </section>
+
+    <footer class="composer-wrap">
+      <div class="composer" id="composer">
+        <div class="attachments" id="attachments" hidden></div>
+        <div class="composer-row">
+          <button class="icon-btn" id="attach-btn" title="Attach image (or paste one)" aria-label="Attach image"><svg class="icon"><use href="#i-image"/></svg></button>
+          <textarea id="composer-input" class="composer-input" rows="1" placeholder="Message Gemini…  (Enter to send, Shift+Enter for a new line)"
+                    aria-label="Message"></textarea>
+          <button class="send-btn" id="send-btn" title="Send"><svg class="icon"><use href="#i-send"/></svg></button>
+          <button class="send-btn is-stop" id="stop-btn" hidden title="Stop generating (Esc)"><svg class="icon"><use href="#i-stop"/></svg></button>
+        </div>
+        <div class="composer-foot">
+          <span id="composer-hint">Answers can be wrong. Verify anything important.</span>
+          <span class="stat" id="turn-stat"></span>
+        </div>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden>
+
+<!-- ============================== settings ============================== -->
+<dialog class="modal" id="settings-modal" aria-labelledby="settings-title">
+  <form method="dialog" class="modal-card">
+    <header class="modal-head">
+      <h2 id="settings-title">Settings</h2>
+      <button class="icon-btn" value="cancel" aria-label="Close settings"><svg class="icon"><use href="#i-close"/></svg></button>
+    </header>
+
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab is-active" data-tab="connection" role="tab">Connection</button>
+      <button type="button" class="tab" data-tab="generation" role="tab">Model</button>
+      <button type="button" class="tab" data-tab="persona" role="tab">Persona</button>
+      <button type="button" class="tab" data-tab="safety" role="tab">Safety</button>
+      <button type="button" class="tab" data-tab="quota" role="tab">Quota</button>
+      <button type="button" class="tab" data-tab="data" role="tab">Data</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- connection -->
+      <section class="tab-panel is-active" data-panel="connection">
+        <div class="callout">
+          <svg class="icon"><use href="#i-info"/></svg>
+          <div>
+            <p><b>Your key stays in this browser</b> (and is sent only to <code>generativelanguage.googleapis.com</code>, or to the local Node proxy if you enable it). Put the key in <code>.env</code> as <code>GEMINI_API_KEY=...</code> — the app reads it automatically when served over <code>http://</code>.</p>
+            <p>Opened via <code>file://</code>? Browsers block reading local files. Either run the included server (<code>node server.mjs</code>) or paste the key below — it is stored in <code>localStorage</code>.</p>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>API key</span>
+          <div class="field-row">
+            <input type="password" id="set-api-key" class="input" placeholder="AIza…" autocomplete="off" spellcheck="false">
+            <button type="button" class="btn btn-ghost" id="test-key">Test</button>
+          </div>
+          <small id="key-source" class="hint">Not loaded yet.</small>
+        </label>
+
+        <label class="field">
+          <span>Request mode</span>
+          <select id="set-request-mode" class="select">
+            <option value="auto">Auto — proxy when available, otherwise direct from the browser</option>
+            <option value="browser">Browser — call the Gemini API directly (key visible in the browser)</option>
+            <option value="proxy">Proxy — route through server.mjs (key never reaches the browser)</option>
+          </select>
+          <small class="hint">Proxy mode needs <code>node server.mjs</code> running. Best for anything shared or deployed.</small>
+        </label>
+
+        <label class="field checkbox">
+          <input type="checkbox" id="set-streaming"><span>Stream responses token by token</span>
+        </label>
+
+        <label class="field">
+          <span>Request timeout (ms)</span>
+          <input type="number" id="set-timeout" class="input" min="5000" max="600000" step="5000">
+        </label>
+
+        <label class="field">
+          <span>Retries on 429 / 5xx (exponential backoff)</span>
+          <input type="number" id="set-retries" class="input" min="0" max="5" step="1">
+        </label>
+      </section>
+
+      <!-- generation -->
+      <section class="tab-panel" data-panel="generation">
+        <label class="field">
+          <span>Model</span>
+          <div class="field-row">
+            <select id="set-model" class="select"></select>
+            <button type="button" class="btn btn-ghost" id="refresh-models" title="Fetch the live list from the API"><svg class="icon"><use href="#i-refresh"/></svg> Live list</button>
+          </div>
+          <small class="hint" id="model-note"></small>
+        </label>
+
+        <label class="field">
+          <span>Temperature <b id="temperature-val">0.7</b></span>
+          <input type="range" id="set-temperature" min="0" max="2" step="0.05">
+          <small class="hint">0 = deterministic, 1+ = creative. 0.2–0.5 for code, 0.8–1.1 for brainstorming.</small>
+        </label>
+
+        <label class="field">
+          <span>Top P <b id="topp-val">0.95</b></span>
+          <input type="range" id="set-topp" min="0" max="1" step="0.01">
+        </label>
+
+        <label class="field">
+          <span>Top K <small>(leave empty to omit — 2.5 Pro rejects it)</small></span>
+          <input type="number" id="set-topk" class="input" min="1" max="100" step="1" placeholder="omitted">
+        </label>
+
+        <label class="field">
+          <span>Max output tokens</span>
+          <input type="number" id="set-max-tokens" class="input" min="256" max="65536" step="256">
+          <small class="hint">Flash 3.x models cap at 65,536 output tokens. A too-small value ends answers early (<code>MAX_TOKENS</code>).</small>
+        </label>
+
+        <label class="field">
+          <span>Stop sequences <small>(comma separated, max 5)</small></span>
+          <input type="text" id="set-stop" class="input" placeholder="###, END">
+        </label>
+
+        <label class="field">
+          <span>Thinking level <small>(3.7/3.8 Flash only; "minimal" is rejected by the API)</small></span>
+          <select id="set-thinking" class="select">
+            <option value="off">off (not sent)</option>
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Context budget per request (approx. tokens)</span>
+          <input type="number" id="set-context" class="input" min="1000" max="500000" step="1000">
+          <small class="hint">Older turns are dropped from the request (never from your saved chat) once the estimate passes this. Lower = cheaper on your TPM quota.</small>
+        </label>
+
+        <label class="field checkbox"><input type="checkbox" id="set-show-thinking"><span>Show the model's thinking summary</span></label>
+        <label class="field checkbox"><input type="checkbox" id="set-show-stats"><span>Show token count and latency under each answer</span></label>
+      </section>
+
+      <!-- persona -->
+      <section class="tab-panel" data-panel="persona">
+        <label class="field">
+          <span>System instruction preset</span>
+          <select id="set-preset" class="select"></select>
+        </label>
+        <label class="field">
+          <span>System instruction (sent with every request)</span>
+          <textarea id="set-system" class="input textarea" rows="9" placeholder="You are…"></textarea>
+          <small class="hint">This is the single biggest quality lever. State the role, the answer format, and what to do when unsure.</small>
+        </label>
+        <div class="suggestions" id="prompt-ideas">
+          <button type="button" class="chip" data-prompt="Explain the difference between let, const and var in JavaScript with one example each.">JS: let vs const vs var</button>
+          <button type="button" class="chip" data-prompt="Review this code and list bugs, then give the fixed version:&#10;&#10;">Code review</button>
+          <button type="button" class="chip" data-prompt="Write a 5-step plan to learn X in 30 days, 30 minutes a day. Replace X with:">30-day learning plan</button>
+          <button type="button" class="chip" data-prompt="Summarise the following text in 5 bullets, then list what is missing:&#10;&#10;">Summarise text</button>
+        </div>
+      </section>
+
+      <!-- safety -->
+      <section class="tab-panel" data-panel="safety">
+        <label class="field">
+          <span>Safety threshold <small>(applied to harassment, hate speech, sexually explicit, dangerous content)</small></span>
+          <select id="set-safety" class="select"></select>
+        </label>
+        <div class="callout warn">
+          <svg class="icon"><use href="#i-warn"/></svg>
+          <div><p>Filters are probabilistic: a <code>SAFETY</code> finish reason can still appear with relaxed thresholds, and blocking can never be fully disabled. Handle it in the UI rather than assuming every request returns text.</p></div>
+        </div>
+        <label class="field checkbox"><input type="checkbox" id="set-remember"><span>Remember conversations in this browser (localStorage)</span></label>
+        <div class="callout">
+          <svg class="icon"><use href="#i-info"/></svg>
+          <div><p><b>Privacy:</b> on the free tier Google states that submitted content may be used to improve its products. Do not paste secrets, customer data, or personal information into a free-tier chatbot.</p></div>
+        </div>
+      </section>
+
+      <!-- quota -->
+      <section class="tab-panel" data-panel="quota">
+        <label class="field checkbox"><input type="checkbox" id="set-guard"><span>Enable the client-side quota guard</span></label>
+        <label class="field">
+          <span>Requests per minute (your limit − margin)</span>
+          <input type="number" id="set-rpm" class="input" min="0" max="2000" step="1">
+        </label>
+        <label class="field">
+          <span>Requests per day (your limit − margin)</span>
+          <input type="number" id="set-rpd" class="input" min="0" max="100000" step="50">
+        </label>
+        <label class="field">
+          <span>Minimum spacing between requests (ms)</span>
+          <input type="number" id="set-interval" class="input" min="0" max="60000" step="500">
+        </label>
+        <button type="button" class="btn btn-ghost" id="reset-quota"><svg class="icon"><use href="#i-refresh"/></svg> Reset today's counter</button>
+        <div class="callout">
+          <svg class="icon"><use href="#i-info"/></svg>
+          <div><p>Google does not publish a single free-tier number — your real RPM / TPM / RPD are per project and visible at <a href="https://aistudio.google.com/rate-limit" target="_blank" rel="noopener noreferrer">aistudio.google.com/rate-limit</a>. Put those numbers (minus a margin) here. RPD resets at midnight Pacific.</p></div>
+        </div>
+      </section>
+
+      <!-- data -->
+      <section class="tab-panel" data-panel="data">
+        <div class="data-grid">
+          <div><span>Conversations</span><b id="stat-chats">0</b></div>
+          <div><span>Messages</span><b id="stat-msgs">0</b></div>
+          <div><span>Prompt tokens (session)</span><b id="stat-prompt">0</b></div>
+          <div><span>Output tokens (session)</span><b id="stat-output">0</b></div>
+          <div><span>Estimated cost</span><b>$0.00 (free tier)</b></div>
+          <div><span>Storage used</span><b id="stat-storage">0 KB</b></div>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-ghost" id="export-md"><svg class="icon"><use href="#i-download"/></svg> Export this chat (.md)</button>
+          <button type="button" class="btn btn-ghost" id="import-chats"><svg class="icon"><use href="#i-download"/></svg> Import JSON</button>
+          <button type="button" class="btn btn-danger" id="wipe-storage">Delete all chats + settings</button>
+        </div>
+        <input type="file" id="import-input" accept="application/json" hidden>
+        <label class="field">
+          <span>Text size <b id="font-scale-val">100%</b></span>
+          <input type="range" id="set-font-scale" min="85" max="130" step="5">
+        </label>
+      </section>
+    </div>
+
+    <footer class="modal-foot">
+      <span class="hint" id="settings-hint">Changes apply immediately and are saved in this browser.</span>
+      <button class="btn btn-primary" value="ok">Done</button>
+    </footer>
+  </form>
+</dialog>
+
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<noscript><p style="padding:2rem;font-family:system-ui">This chatbot needs JavaScript enabled.</p></noscript>
+
+<script src="js/config.js"></script>
+<script src="js/markdown.js"></script>
+<script src="js/gemini.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

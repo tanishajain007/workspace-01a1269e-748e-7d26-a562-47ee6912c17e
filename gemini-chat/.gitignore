@@ -1,0 +1,16 @@
+# Secrets — never commit these
+.env
+.env.local
+*.pem
+*.key
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+
+# Node (only if you add tooling later)
+node_modules/
+coverage/
